@@ -3,11 +3,11 @@ If you're like me, you looked at the Kubernetes HTTP API, and thought
 library to speak it, and thought "where did all this complexity come
 from‽"
 
-# Generics / Code-Generation
-
 It may help to know that  Kubernetes was originally written in Java.
 In parts of the library API design, it shows that the author was
 thinking in Java.
+
+# Generics / Code-Generation
 
 You probably think that Go doesn't have generics.  Go is only missing
 generics if you're afraid of code-generation; given a "generic"
@@ -75,6 +75,49 @@ different client-set for each place where the GV lives, and there's no
 good tooling around combining client-sets.  So if you're having to
 wrangle multiple client-sets, why not just cut-out some complexity and
 wrangle multiple clients directly?
+
+# Layering
+
+Here's how things are layered:
+
+    +-------------------------------------------------------------------------------------------------------------------+
+    |                                        k8s.io/client-go/kubernetes.Clientset                                      |
+    +--------------------------------------------------+-+--------------------------------------------------------------+
+    | k8s.io/client-go/kubernetes/typed/core/v1.CoreV1Client | | k8s.io/client-go/kubernetes/typed/apps/v1.AppsV1Client |
+    +--------------------------------------------------------+ +--------------------------------------------------------+
+    |             k8s.io/client-go/rest.Interface            | |            k8s.io/client-go/rest.Interface             |
+    |          (*k8s.io/client-go/rest.RESTClient)           | |          (*k8s.io/client-go/rest.RESTClient)           |
+    |                 +--------------------------------------+ |                 +--------------------------------------+
+    |                 |         net/http.RoundTripper        | |                 |         net/http.RoundTripper        |
+    |                 | (k8s.io/client-go/rest.TransportFor) | |                 | (k8s.io/client-go/rest.TransportFor  |
+    +-----------------+--------------------------------------+ +-----------------+------------------------------------- +
+    |             k8s.io/client-go/rest.Config               | |             k8s.io/client-go/rest.Config               |
+    +--------------------------------------------------------+-+--------------------------------------------------------+
+    |                                            k8s.io/client-go/rest.Config                                           |
+    +-------------------------------------------------------------------------------------------------------------------+
+
+Each client gets its own `rest.RESTClient` that each has its own
+`rest.Config` that is slightly modified for API-Group-specific things
+from the shared base `rest.Config`
+
+See https://github.com/datawire/k8scli/blob/master/client.go for the
+low-levels of how that base `rest.Config` is created; it closely
+mimics what `kubectl` does, but is much easier to read (and isn't
+spread out across a dozen different files!).  The linked code uses
+`k8s.io/client-go` to load the kubeconfig, and obtain a the
+`rest.Config`, but then adapts it for use with
+`github.com/ericchiang/k8s` instead of `k8s.io/client-go`; so you can
+ignore everything after it obtains the restconfig.  For comparison,
+here's what the `datawire/k8scli` layering looks like:
+
+    +--------------------------------------+
+    |    github.com/ericchiang/k8s.Client  |
+    +--------------------------------------+
+    |         net/http.RoundTripper        |
+    | (k8s.io/client-go/rest.TransportFor) |
+    +--------------------------------------+
+    |    k8s.io/client-go/rest.Config      |
+    +--------------------------------------+
 
 # Misc
 
