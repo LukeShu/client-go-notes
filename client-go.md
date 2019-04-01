@@ -69,12 +69,12 @@ a CRD, or it could even just be one of the more exotic parts of the
 official k8s API, like `apiregistration.k8s.io/v1` /
 `k8s.io/kube-aggregator/pkg/apis/apiregistration/v1` /
 `k8s.io/kube-aggregator/pkg/client/clientset_generated/clientset` (see
-[./apigroups.org][] for a listing of the package names for all of the
-API groups in the official k8s API).  You need a different client-set
-for each place where the GV lives, and there's no good tooling around
-combining client-sets.  So if you're having to wrangle multiple
-client-sets, why not just cut-out some complexity and wrangle multiple
-clients directly?
+[apigroups.org](./apigroups.org) for a listing of the package names
+for all of the API groups in the official k8s API).  You need a
+different client-set for each place where the GV lives, and there's no
+good tooling around combining client-sets.  So if you're having to
+wrangle multiple client-sets, why not just cut-out some complexity and
+wrangle multiple clients directly?
 
 # Misc
 
