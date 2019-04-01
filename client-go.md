@@ -1,7 +1,9 @@
 If you're like me, you looked at the Kubernetes HTTP API, and thought
 "this is simple enough."  Then you looked at the `k8s.io/client-go`
-library to speak it, and though "where did all this complexity come
+library to speak it, and thought "where did all this complexity come
 from‽"
+
+# Generics / Code-Generation
 
 It may help to know that  Kubernetes was originally written in Java.
 In parts of the library API design, it shows that the author was
@@ -20,8 +22,10 @@ following generics:
 
   - client
     * `k8s.io/client-go/kubernetes/scheme` ???
-    * `k8s.io/client-go/kubernetes/typed/API_GROUP/VERSION` contains a
+    * `K8s.io/client-go/kubernetes/typed/API_GROUP/VERSION` contains a
       client for RPC operations for the `API_GROUP/VERSION` GV.
+    * `k8s.io/client-go/kubernetes` contains a *client-set* of all of
+      the clients in `k8s.io/client-go/kubernetes/typed/...`.
   - lister
     * `k8s.io/client-go/listers/API_GROUP/VERSION` contains typed
       listers for the types in the `API_GROUP/VERSION` GV.
@@ -42,6 +46,40 @@ GV.
 
 `code-generator` also can generate something called `Defaulter`s, but
 I'm not sure what that is.
+
+# Clients / Client-Sets
+
+Each API Group/Version gets its own generated *client*; if you want
+typing.  If you're OK without typing, there's
+`k8s.io/client-go/dynamic`, which is a non-typed/dynamically-typed
+client.
+
+All of the generated typed individual clients (at
+`k8s.io/client-go/kubernetes/typed/...` are bundled together in to a
+*client-set* that makes it "easy" to use any of the individual
+clients.  Upon further reflection, I'm not sure it actually makes
+things any easier than using individual clients directly, except that
+it maybe makes things more easily discoverable (especially from IDE
+auto-complete).
+
+The usefulness of client-sets is significantly damped if you ever need
+to deal with a API group that's `k8s.io/api/...` /
+`k8s.io/client-go/kubernetes/typed/...`.  That could be something like
+a CRD, or it could even just be one of the more exotic parts of the
+official k8s API, like `apiregistration.k8s.io/v1` /
+`k8s.io/kube-aggregator/pkg/apis/apiregistration/v1` /
+`k8s.io/kube-aggregator/pkg/client/clientset_generated/clientset` (see
+[./apigroups.org][] for a listing of the package names for all of the
+API groups in the official k8s API).  You need a different client-set
+for each place where the GV lives, and there's no good tooling around
+combining client-sets.  So if you're having to wrangle multiple
+client-sets, why not just cut-out some complexity and wrangle multiple
+clients directly?
+
+# Misc
+
+TODO: Discuss the relationship between clients and listers and
+informers.
 
 Other things under `k8s.io/client-go`
  - `discovery`
