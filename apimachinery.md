@@ -66,7 +66,7 @@ not the opinion of the Kubernetes developers.
 `k8s.io/apimachinery/pkg/runtime/serializer/json.DefaultMetaFactory`
 
 The magic is in
-https://github.com/kubernetes/apimachinery/blob/master/pkg/runtime/serializer/json/meta.go#L46-L63
+https://github.com/kubernetes/apimachinery/blob/a1e35b736404f6ced690f255586e2e98ad371244/pkg/runtime/serializer/json/meta.go#L46-L63
 It then takes the returned schema.GroupVersionKind and looks it up in
 a runtime.Scheme, and creates an instance of the appropriate type
 using `scheme.New(GVK)`, which assumes that the appropriate GVK→type
