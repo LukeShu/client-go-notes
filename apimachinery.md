@@ -22,32 +22,34 @@ This type-system is used by `kubectl` to handle parsing the
 kubeconfig; the schema ("api") of the file is in
 `k8s.io/client-go/tools/clientcmd/api`.
 
-           "one stop shop" for building a client, which      ,- register.go: api.SchemeGroupVersion = GV{G:"", V:"__internal"}
-           means that it's a dumping ground for all kinds    |- register.go: api.SchemeBuilder      = (addKnownTypes)
-        ,- of crap someone was too lazy to find a proper     |- register.go: api.AddToScheme        = func(s *runtime.Scheme) error { ... }
-        |  home for.                                  ,------+- types.go: types for GV{G:"", V:"__internal"}
-        |                                            /       `- helpers.go: util functions: IsEmptyConfig, MinifyConfig, ShortenConfig, FlattenConfig, FlattenContent, ResolvePath, MakeAbs
-        |                                           /
-    ,--' `-------------------------,               /         ,- register.go: v1.SchemeGroupVersion = GV{G:"", V:"v1"}
-    k8s.io/client-go/tools/clientcmd/api        <-'          |- register.go: v1.SchemeBuilder      = (addKnownTypes, addConversionFuncs)
-    k8s.io/client-go/tools/clientcmd/api/v1     <------------+- register.go: v1.AddToScheme        = (func(s *runtime.Scheme) error)(SchemeBuilder.AttToScheme)
-    k8s.io/client-go/tools/clientcmd/api/latest <-,          |- types.go: types for GV{G:"", V:"v1"}
-                                                   \         `- conversion.go: conversion functions; part of .SchemeBuilder
-                                                    \
-                                                     \       ,- latest.Version         = "v1"
-                                                      `------+- latest.ExternalVersion = GV{G:"", V:"v1"}
-                                                             |- latest.OldestVersion   = "v1"
-                                                             |- latest.Versions        = []string{"v1"}
-                                                             |- latest.Scheme          = runtime.NewScheme()
-                                                             |    |- api.AddToScheme(Scheme)
-                                                             |    `- v1.AddToScheme(Scheme)
-                                                             |- latest.yamlSerializer  = json.NewYAMLSerializer(json.DefaultMetaFactory, Scheme, Scheme),
-                                                             `- latest.Codec           = versioning.NewDefaultCodecForScheme(
-                                                                                             /* scheme        = */ Scheme,
-                                                                                             /* encoder       = */ yamlSerializer,
-                                                                                             /* decoder       = */ yamlSerializer,
-                                                                                             /* encodeVersion = */ GV{G:"", V:"v1"},
-                                                                                             /* decodeVersion = */ GV{G:"", V:"__internal"})
+           "one stop shop" for building a client, which
+           means that it's a dumping ground for all kinds
+        ,- of crap someone was too lazy to find a proper  ,- register.go: api.SchemeGroupVersion = GV{G:"", V:"__internal"}
+        |  home for.                                      |- register.go: api.SchemeBuilder      = (addKnownTypes)
+        |                                             ,---+- register.go: api.AddToScheme        = func(s *runtime.Scheme) error { ... }
+        |                                            /    |- types.go: types for GV{G:"", V:"__internal"}
+    ,--' `-------------------------,                /     `- helpers.go: util functions: IsEmptyConfig, MinifyConfig, ShortenConfig, FlattenConfig, FlattenContent, ResolvePath, MakeAbs
+    k8s.io/client-go/tools/clientcmd/api        <--'
+    k8s.io/client-go/tools/clientcmd/api/v1     <--,
+    k8s.io/client-go/tools/clientcmd/api/latest <-, \     ,- register.go: v1.SchemeGroupVersion = GV{G:"", V:"v1"}
+                                                  |  \    |- register.go: v1.SchemeBuilder      = (addKnownTypes, addConversionFuncs)
+      ,-------------------------------------------'   `---+- register.go: v1.AddToScheme        = (func(s *runtime.Scheme) error)(SchemeBuilder.AttToScheme)
+      |                                                   |- types.go: types for GV{G:"", V:"v1"}
+      |                                                   `- conversion.go: conversion functions; part of .SchemeBuilder
+      | ,- latest.Version         = "v1"
+      | |- latest.ExternalVersion = GV{G:"", V:"v1"}
+      | |- latest.OldestVersion   = "v1"
+      | |- latest.Versions        = []string{"v1"}
+      `-+- latest.Scheme          = runtime.NewScheme()
+        |    |- api.AddToScheme(Scheme)
+        |    `- v1.AddToScheme(Scheme)
+        |- latest.yamlSerializer  = json.NewYAMLSerializer(json.DefaultMetaFactory, Scheme, Scheme),
+        `- latest.Codec           = versioning.NewDefaultCodecForScheme(
+                                        /* scheme        = */ Scheme,
+                                        /* encoder       = */ yamlSerializer,
+                                        /* decoder       = */ yamlSerializer,
+                                        /* encodeVersion = */ GV{G:"", V:"v1"},
+                                        /* decodeVersion = */ GV{G:"", V:"__internal"})
 
 Here we see two versions of the GV: `v1` and `__internal`.  They are
 mostly the same, except that `__internal` has programming niceties,
