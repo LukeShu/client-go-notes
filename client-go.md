@@ -36,6 +36,7 @@ following generics:
       typed informers.
     * `k8s.io/client-go/informers/API_GROUP/VERSION` contains typed
       informers for the types in the `API_GROUP/VERSION` GV.
+    * `k8s.io/client-go/informers/internalinterfaces` ???
 
 For "untyped" things, rather than using `interface{}`, the Kubernetes
 libraries use `k8s.io/apimachinery/pkg/runtime.Object`.
