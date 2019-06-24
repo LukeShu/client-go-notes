@@ -1,12 +1,10 @@
-This is based on k8s 1.13.
+This is based on k8s 1.15.
 
-TODO: Update for k8s 1.14.
-
+| ----- | ------------------------------------- | ------------------------------------------------------------- |
 | kinds | GV                                    | go import                                                     |
 |-------+---------------------------------------+---------------------------------------------------------------|
 |       | admission.k8s.io/v1beta1              | k8s.io/api/admission/v1beta1                                  |
-|     3 | admissionregistration.k8s.io/v1alpha1 | k8s.io/api/admissionregistration/v1alpha1                     |
-|     6 | admissionregistration.k8s.io/v1beta1  | k8s.io/api/admissionregistration/v1beta1                      |
+|     7 | admissionregistration.k8s.io/v1beta1  | k8s.io/api/admissionregistration/v1beta1                      |
 |    12 | apps/v1                               | k8s.io/api/apps/v1                                            |
 |     9 | apps/v1beta1                          | k8s.io/api/apps/v1beta1                                       |
 |    13 | apps/v1beta2                          | k8s.io/api/apps/v1beta2                                       |
@@ -22,23 +20,28 @@ TODO: Update for k8s 1.14.
 |     2 | batch/v1beta1                         | k8s.io/api/batch/v1beta1                                      |
 |     2 | batch/v2alpha1                        | k8s.io/api/batch/v2alpha1                                     |
 |     2 | certificates.k8s.io/v1beta1           | k8s.io/api/certificates/v1beta1                               |
+|     1 | coordination.k8s.io/v1                | k8s.io/api/coordination/v1                                    |
 |     1 | coordination.k8s.io/v1beta1           | k8s.io/api/coordination/v1beta1                               |
-|   143 | core/v1                               | k8s.io/api/core/v1                                            |
+|   145 | core/v1                               | k8s.io/api/core/v1                                            |
 |     2 | events.k8s.io/v1beta1                 | k8s.io/api/events/v1beta1                                     |
-|    31 | extensions/v1beta1                    | k8s.io/api/extensions/v1beta1                                 |
+|    33 | extensions/v1beta1                    | k8s.io/api/extensions/v1beta1                                 |
 |     6 | networking.k8s.io/v1                  | k8s.io/api/networking/v1                                      |
-|    12 | policy/v1beta1                        | k8s.io/api/policy/v1beta1                                     |
+|     6 | networking.k8s.io/v1beta1             | k8s.io/api/networking/v1beta1                                 |
+|     2 | node.k8s.io/v1alpha1                  | k8s.io/api/node/v1alpha1                                      |
+|     2 | node.k8s.io/v1beta1                   | k8s.io/api/node/v1beta1                                       |
+|    14 | policy/v1beta1                        | k8s.io/api/policy/v1beta1                                     |
 |     8 | rbac.authorization.k8s.io/v1          | k8s.io/api/rbac/v1                                            |
 |     8 | rbac.authorization.k8s.io/v1alpha1    | k8s.io/api/rbac/v1alpha1                                      |
 |     8 | rbac.authorization.k8s.io/v1beta1     | k8s.io/api/rbac/v1beta1                                       |
+|     1 | scheduling.k8s.io/v1                  | k8s.io/api/scheduling/v1                                      |
 |     1 | scheduling.k8s.io/v1alpha1            | k8s.io/api/scheduling/v1alpha1                                |
 |     1 | scheduling.k8s.io/v1beta1             | k8s.io/api/scheduling/v1beta1                                 |
 |     1 | settings.k8s.io/v1alpha1              | k8s.io/api/settings/v1alpha1                                  |
 |     4 | storage.k8s.io/v1                     | k8s.io/api/storage/v1                                         |
 |     3 | storage.k8s.io/v1alpha1               | k8s.io/api/storage/v1alpha1                                   |
-|     5 | storage.k8s.io/v1beta1                | k8s.io/api/storage/v1beta1                                    |
+|     7 | storage.k8s.io/v1beta1                | k8s.io/api/storage/v1beta1                                    |
 |    17 | apiextensions.k8s.io/v1beta1          | k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1 |
 |     1 | core/resource                         | k8s.io/apimachinery/pkg/api/resource                          |
-|    21 | meta/v1                               | k8s.io/apimachinery/pkg/apis/meta/v1                          |
+|    23 | meta/v1                               | k8s.io/apimachinery/pkg/apis/meta/v1                          |
 |     3 | apiregistration.k8s.io/v1             | k8s.io/kube-aggregator/pkg/apis/apiregistration/v1            |
 |     3 | apiregistration.k8s.io/v1beta1        | k8s.io/kube-aggregator/pkg/apis/apiregistration/v1beta1       |
